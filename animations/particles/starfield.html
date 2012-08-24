@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<style>
+		html {
+			height: 100%;
+		}
+		body{
+			padding: 0; margin: 0;
+			min-height: 400px; height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+
+	<script>
+		// Originally from http://cssdeck.com/item/preview/591/particles-explosion-with-html5-canvas
+		window.requestAnimFrame = (function(){
+			return window.requestAnimationFrame    ||
+				window.webkitRequestAnimationFrame ||
+				window.mozRequestAnimationFrame    ||
+				window.oRequestAnimationFrame      ||
+				window.msRequestAnimationFrame     ||
+				function(callback) {
+					window.setTimeout(callback, 1000 / 60);
+				};
+		})();
+
+		var canvas  = document.getElementById("canvas"),
+			ctx     = canvas.getContext("2d"),
+			W       = window.innerWidth,
+			H       = window.innerHeight,
+			stars = [],
+			i;
+
+		canvas.width = W;
+		canvas.height = H;
+
+		// Random stars creator
+		function create() {
+			// Place at the center
+			this.x = W / 2;
+			this.y = H / 2;
+
+			// Random velocities
+			this.vx = Math.random() * 20;
+			this.vy = Math.random() * 10;
+
+			if ( Math.random() >= 0.5 ) { this.vx *= -1; }
+			if ( Math.random() >= 0.5 ) { this.vy *= -1; }
+
+
+			this.x += this.vx * 20;
+			this.y += this.vy * 20;
+			this.ox = this.x;
+			this.oy = this.y;
+			this.od = Math.sqrt(Math.pow(this.x - (W / 2), 2) + Math.pow(this.y - (H / 2), 2));
+
+			// Random colors
+			var colorType = Math.random();
+
+			// Blue dwarf
+			if ( colorType <= 0.02 ) {
+				this.r = 0;
+				this.g = 0;
+				this.b = 100 + Math.round(Math.random()) * 255;
+				this.a = 1;
+				this.radius = 1 + Math.random() * 2;
+			}
+			// Red giant
+			else if ( colorType <= 0.03 ) {
+				this.r = 100 + Math.round(Math.random()) * 255;
+				this.g = 0;
+				this.b = 0;
+				this.a = 0.7 + Math.random() * 0.9;
+				this.radius = 2.5 + Math.random() * 3.5;
+			} else {
+				this.r = 255;
+				this.g = 255;
+				this.b = 255;
+				this.a = 0.5 + Math.random() * 0.9;
+				this.radius = 1 + Math.random() * 2;
+			}
+
+			this.a = 0.05;
+		}
+
+		function draw() {
+			var s;
+			//Fill canvas with black color
+		    ctx.globalCompositeOperation = "source-over";
+		    ctx.fillStyle = "rgba(0,0,0,0.15)";
+		    ctx.fillRect(0, 0, W, H);
+
+			//Fill the canvas with stars
+			for ( i = 0; i < stars.length; i++ ) {
+				s = stars[i];
+
+				//Create the stars
+				ctx.beginPath();
+				ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2, false);
+		        ctx.fillStyle = "rgba(" + s.r + ", " + s.g + ", " + s.b + ", " + s.a + ")";
+				ctx.fill();
+
+				s.x += s.vx;
+				s.y += s.vy;
+				s.radius = Math.min(5, s.radius + .02);
+				s.a *= 1.1;
+
+				// Bounds check
+				if (
+					// Left
+					s.x + s.radius <= 0
+					// Right
+					|| s.x - s.radius >= W
+					// Top
+					|| s.y + s.radius <= 0
+					// Bottom
+					|| s.y - s.radius >= H
+				) {
+					stars[i] = new create();
+				}
+			}
+		}
+
+		function animate() {
+			if ( stars.length < 250 ) {
+				stars.push(new create());
+			}
+
+			draw();
+			requestAnimFrame(animate, ctx);
+		}
+
+		animate();
+	</script>
+</body>
+</html>

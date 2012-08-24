@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script src="../lib/local/Point.js"></script>
+<script src="../lib/local/Velocity.js"></script>
+<script src="../lib/local/Shape.js"></script>
+<script src="../lib/local/Rectangle.js"></script>
+<script src="../lib/local/Container.js"></script>
+<script src="../lib/local/Circle.js"></script>
+<script src="../lib/local/Polygon.js"></script>
+<script src="../lib/local/lib.js"></script>
+<script src="../lib/local/data-structures/LinkedList.js"></script>
+
+<style>body{ padding:0; margin:0; }</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+
+	<script>
+		var canvas = document.getElementById("canvas"),
+			ctx    = canvas.getContext("2d"),
+			shape  = new Rectangle(null, 100, 100),
+			WIDTH, HEIGHT, angle = 0;
+
+		window.onresize = function() {
+			WIDTH         = window.innerWidth;
+			HEIGHT        = window.innerHeight;
+			canvas.width  = WIDTH;
+			canvas.height = HEIGHT;
+		}
+
+		window.onresize();
+
+		shape.fillStyle = "white";
+
+		function incrementAngle() {
+            angle += 0.05;
+            if(angle > Math.PI * 2) {
+                angle = 0;
+            }
+        }
+
+		function stepFrame() {
+			shape.position = new Point(WIDTH / 2 - shape.width / 2, HEIGHT / 2 - shape.height / 2);
+
+			var x = shape.position.x,
+				y = shape.position.y;
+
+			ctx.fillStyle = "rgba(0, 0, 0, 1)";
+			ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+			// Save current canvas context state
+			ctx.save();
+			// Move canvas starting point to the location of our shape
+			ctx.translate(x, y);
+			// Rotate the canvas
+			ctx.rotate(angle);
+			// Reposition our shape in relation to the translated canvas
+			shape.position = new Point(-shape.width / 2, -shape.height / 2);
+			shape.draw(ctx);
+			// Undo all transformations (translations, rotations, etc)
+			ctx.restore();
+			// Restore our shape's position
+			shape.position = new Point(x, y);
+
+			incrementAngle();
+
+			requestAnimFrame(stepFrame, ctx);
+		}
+
+		requestAnimFrame(stepFrame, ctx);
+	</script>
+</body>
+</html>

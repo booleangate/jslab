@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<style>
+		html {
+			height: 100%;
+		}
+		body{
+			padding: 0; margin: 0;
+			min-height: 400px; height: 100%;
+			width: 100%;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="canvas"></canvas>
+
+	<script>
+		// Originally from http://cssdeck.com/item/preview/591/particles-explosion-with-html5-canvas
+		window.requestAnimFrame = (function(){
+			return window.requestAnimationFrame    ||
+				window.webkitRequestAnimationFrame ||
+				window.mozRequestAnimationFrame    ||
+				window.oRequestAnimationFrame      ||
+				window.msRequestAnimationFrame     ||
+				function( callback ){
+					window.setTimeout(callback, 1000 / 60);
+				};
+		})();
+
+		var canvas  = document.getElementById("canvas"),
+			ctx     = canvas.getContext("2d"),
+			W       = window.innerWidth,
+			H       = window.innerHeight,
+			circles = [],
+			i;
+
+		canvas.width = W;
+		canvas.height = H;
+
+		// Random Circles creator
+		function create() {
+			// Place at the center
+			this.x = W / 2;
+			this.y = H / 2;
+
+			// Random radius between 2 and 3
+			this.radius = 2 + Math.random() * 3;
+
+			// Random velocities
+			this.vx = Math.random() * 20;
+			this.vy = Math.random() * 10;
+
+			if ( Math.random() >= 0.5 ) { this.vx *= -1; }
+			if ( Math.random() >= 0.5 ) { this.vy *= -1; }
+
+			this.x += this.vx * 50;
+			this.y += this.vy * 50;
+
+			// Random colors
+			this.r = Math.round(Math.random()) * 255;
+			this.g = Math.round(Math.random()) * 255;
+			this.b = Math.round(Math.random()) * 255;
+			this.a = 0.5 + Math.random() * 0.9;
+		}
+
+		function draw() {
+			var c;
+
+			//Fill canvas with black color
+		    ctx.globalCompositeOperation = "source-over";
+		    ctx.fillStyle = "rgba(0,0,0,0.14)";
+		    ctx.fillRect(0, 0, W, H);
+
+			//Fill the canvas with circles
+			for ( i = 0; i < circles.length; i++ ) {
+				c = circles[i];
+
+				//Create the circles
+				ctx.beginPath();
+				ctx.arc(c.x, c.y, c.radius, 0, Math.PI*2, false);
+		        ctx.fillStyle = "rgba(" + c.r + ", " + c.g + ", " + c.b + ", " + c.a + ")";
+				ctx.fill();
+
+				c.x += c.vx;
+				c.y += c.vy;
+				c.radius -= .02;
+
+				if ( c.radius <= 0 ) {
+					circles[i] = new create();
+				}
+			}
+		}
+
+		function animate() {
+			if ( circles.length < 500 ) {
+				circles.push(new create());
+			}
+
+			draw();
+			requestAnimFrame(animate, ctx);
+		}
+
+		animate();
+	</script>
+</body>
+</html>
