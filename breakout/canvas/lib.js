@@ -1,33 +1,17 @@
-HTMLCanvasElement.prototype.relMouseCoords = function(event) {
-	var totalOffsetX = 0;
-	var totalOffsetY = 0;
-	var currentElement = this;
-
-	do {
-		totalOffsetX += currentElement.offsetLeft;
-		totalOffsetY += currentElement.offsetTop;
-	} while ( currentElement = currentElement.offsetParent );
-
-	return new Point(
-		event.pageX - totalOffsetX, 
-		event.pageY - totalOffsetY
-	);
-};
-
 Levels = (function() {
 	var BRICK_HEIGHT = 15,
 		BALL_RADIUS  = 10;
-	
+
 	return {
 		getLevel: function(level, ctxWidth, ctxHeight) {
 			return this["getLevel" + +level](ctxWidth, ctxHeight);
 		},
-		
+
 		getLevel1: function(ctxWidth, ctxHeight) {
 			var brickPositions = [],
 				ballPosition   = new Point(),
 				c, r;
-			
+
 			for ( c = 0; c < 8; ++c ) {
 				for ( r = 0; r < 8; ++r ) {
 					brickPositions.push(new Point(
@@ -36,7 +20,7 @@ Levels = (function() {
 					));
 				}
 			}
-			
+
 			return {
 				bricks:      brickPositions,
 				lowestBrick: brickPositions[brickPositions.length - 1],
@@ -52,13 +36,13 @@ Levels = (function() {
 				maxY = ctxHeight - BRICK_HEIGHT - 200,
 				minX = BALL_RADIUS + 5,
 				maxX = ctxWidth - BALL_RADIUS - 5;
-			
+
 			return new Point(
 				minX + Math.floor(Math.random() * (maxX - minX + 1)),
 				minY + Math.floor(Math.random() * (maxY - minY + 1))
 			);
 		},
-		
+
 		getRandomVelocity: function() {
 			// Random slope of 3 to 5
 			return new Velocity(
