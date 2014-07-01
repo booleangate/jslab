@@ -154,12 +154,12 @@
 		var insults = [
            "Try harder next time.",
            "You have brought great dishonor upon your family.",
-           "Maybe next year, you'll graduate to big boy pants.",
-           "Derp.",
-           "FFFFFuuuuuuuuu."
+           "One day you'll graduate to the big leagues.",
+           "Derp."
   		];
+		var i = Math.randomRange(0, insults.length - 1) >>> 0;
 
-		return insults[ parseInt(Math.randomRange(0, insults.length - 1), 10) ];
+		return insults[i];
 	}
 
 	function drawScore() {
@@ -192,6 +192,7 @@
 		else if ( isGameOver ) {
 			write("Game over!", "You scored " + score + " points. " + insult);
 			ctx.fillText("Press space to start a new game.", 100, 208);
+			score = 0;
 			return true;
 		}
 		else if ( isPaused ) {
